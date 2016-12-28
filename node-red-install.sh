@@ -16,6 +16,15 @@
 
 # Use opkg to install node-red console app
 
+modMountd (){
+	uci set mountd.mountd.timeout='3600'
+	uci commit
+	echo "STARTING MOUNTD RELOAD"
+	/etc/init.d/mountd reload
+	echo "STARTING 10 second delay"
+	sleep 10
+}
+
 getFileSize () {
 	URL="http://repo.onion.io/omega2/software/node-red.tar.gz"
 	resp=$(wget --spider $URL 2>&1 | grep Length | awk '{print $2}')
@@ -81,6 +90,7 @@ createExec(){
 }
 
 main(){
+	modMountd
 	onlineCheck=$(isOnline)
 	if [ "$onlineCheck" == "0" ]; then
 		exit
